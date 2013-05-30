@@ -15,26 +15,26 @@ NEWDIST="d1st"
 NEWTORBROWSER="t0rbr0wser"
 
 rsync $ARGS $SITE $LOCATION
-mv $LOCATION/dist/$NEWTORBROWSER
+mv $LOCATION/dist/torbrowser $LOCATION/dist/$NEWTORBROWSER
 mv $LOCATION/dist $LOCATION/$NEWDIST
 ## all files of the form foo/dist/torbrowser/bar are 
 ## now known as foo/$NEWDIST/$NEWTORBROWSER/bar
 
 replace_strings () {
-  sed "s/dist\/torbrowser/$NEWDIST\/$NEWTORBROWSER/g" *.html.en > $dir.new
+  sed "s/dist\/torbrowser/$NEWDIST\/$NEWTORBROWSER/g" $dir > $dir.new
     ## Makes a new file with the newly named file paths
-  rm -f $dir ## This is the html file without file paths replaced
+  rm $dir ## This is the html file without file paths replaced
   mv $dir.new $dir ## Now it's back
 }
 
 walk () {
 for dir in `echo *`
 do
-   if [ -d "$dir" ] ; then # ==> If it is a directory (-d)...
-     cd $dir
-     walk()
-     cd ..
-   else ## not a directory
+   if [ -d "$dir" ] ; then # If it is a directory
+     cd $dir               # enter the directory
+     walk()                # and execute this script recursively
+     cd ..                 # then leave the directory
+   else                    # Not a directory
      replace_strings()
    fi
 done
