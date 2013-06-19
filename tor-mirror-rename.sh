@@ -8,41 +8,26 @@
 ## This script should be added to a cron job like so:
 ## 0 */6 * * * tor-mirror-rename.sh
 
-ARGS="-aq"
+ARGS="-aq --delete"
 SITE="rsync://rsync.torproject.org/website-mirror"
-LOCATION="/var/www"
+LOCATION="/var/www/t0r"
 NEWDIST="d1st"
-NEWTORBROWSER="t0rbr0wser"
+NEWTORBROWSER="t0rbrowser"
 
 rsync $ARGS $SITE $LOCATION
 
-cd $LOCATION
-mkdir -p $NEWDIST
-rsync -a $LOCATION/dist $LOCATION/$NEWDIST
+if [ ! -x $LOCATION/$NEWDIST ]
+  do mkdir $LOCATION/$NEWDIST; done
+fi
+if [ ! -x $LOCATION/$NEWDIST/$NEWTORBROWSER ]
+  do mkdir $LOCATION/$NEWDIST/$NEWTORBROWSER; done
+fi
+## Now we have a dist/torbrowser and a d1st/t0rbrowser directory
+
+rsync $ARGS $LOCATION/dist $LOCATION/$NEWDIST
 mv $LOCATION/$NEWDIST/torbrowser $LOCATION/$NEWDIST/$NEWTORBROWSER
 ## all files of the form foo/dist/torbrowser/bar are 
 ## now also known as foo/$NEWDIST/$NEWTORBROWSER/bar
 
-#replace_strings () {
-#  sed "s/dist\/torbrowser/$NEWDIST\/$NEWTORBROWSER/g" $dir > $dir.new
-#    ## Makes a new file with the newly named file paths
-#  rm $dir ## This is the html file without file paths replaced
-#  mv $dir.new $dir ## Now it's back
-#}
-#
-#walk () {
-#for dir in `echo *`
-#do
-#   if [ -d "$dir" ] ; then # If it is a directory
-#     cd $dir               # enter the directory
-#     walk()                # and execute this script recursively
-#     cd ..                 # then leave the directory
-#   else                    # Not a directory
-#     replace_strings()
-#   fi
-#done
-#}
-# 
-#walk();
 exit 0;
 
